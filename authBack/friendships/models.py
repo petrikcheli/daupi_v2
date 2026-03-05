@@ -5,7 +5,7 @@ from django.utils import timezone
 User = settings.AUTH_USER_MODEL
 
 class FriendshipStatus(models.TextChoices):
-    PENDIGN  = "PENDING"  ,"Pending"
+    PENDING  = "PENDING"  ,"Pending"
     ACCEPTED = "ACCEPTED" ,"Accepted"
     DECLINED = "DECLINED" ,"Declined"
     BLOCKED  = "BLOCKED"  ,"Blocked"
@@ -26,7 +26,7 @@ class Friendship(models.Model):
     status = models.CharField(
         max_length=10,
         choices=FriendshipStatus.choices,
-        default=FriendshipStatus.PENDIGN
+        default=FriendshipStatus.PENDING
     )
 
     created_at = models.DateTimeField(default=timezone.now)
@@ -47,7 +47,7 @@ class Friendship(models.Model):
 
     def save(self, *args, **kwargs):
         if self.user1_id > self.user2_id:
-            self.user1_id, self.user2 = self.user2_id, self.user1_id
+            self.user1_id, self.user2_id = self.user2_id, self.user1_id
         super().save(*args, **kwargs)
 
     def __str__(self):

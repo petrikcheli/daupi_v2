@@ -24,17 +24,17 @@ def send_friend_request(from_user, to_user):
         if friendship.status == FriendshipStatus.ACCEPTED:
             raise ValueError("Already firends")
         
-        if friendship.status ==  FriendshipStatus.PENDIGN:
+        if friendship.status ==  FriendshipStatus.PENDING:
             raise ValueError("Request alreay sent")
         
-        friendship.status = FriendshipStatus.PENDIGN
+        friendship.status = FriendshipStatus.PENDING
         friendship.save(update_fields=["status"])
         return friendship
     
     return Friendship.objects.create(
         user1=user1,
         user2=user2,
-        status=FriendshipStatus.PENDIGN
+        status=FriendshipStatus.PENDING
     )
 
 @transaction.atomic
@@ -55,7 +55,7 @@ def decline_friendship(friendship: Friendship, user):
     if user not in [friendship.user1, friendship.user2]:
         raise PermissionError("Not allowed")
     
-    if friendship.status != FriendshipStatus.PENDIGN:
+    if friendship.status != FriendshipStatus.PENDING:
         raise ValueError("Only pending requests can be declined")
     
     friendship.status = FriendshipStatus.DECLINED
@@ -73,6 +73,6 @@ def block_friendship(friendship: Friendship, user):
         raise ValueError("Already blocked")
     
     friendship.status = FriendshipStatus.BLOCKED
-    friendship.save(update_fields=["status", "update_at"])
+    friendship.save(update_fields=["status", "updated_at"])
 
     return friendship

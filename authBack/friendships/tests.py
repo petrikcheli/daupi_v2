@@ -1,6 +1,7 @@
 from django.test import TestCase
 
-from rest_framework.test import APITestCase
+from rest_framework.response import Response
+from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
 from django.urls import reverse
 from django.contrib.auth import get_user_model
@@ -31,29 +32,33 @@ class FriendshipAPITestCase(APITestCase):
     # Отправка запроса
     # -----------------------------
     def test_send_friend_request(self):
+        self.client = APIClient()
+
         self.client.force_authenticate(user=self.user1)
 
-        response = self.client.post(
+        response: Response = self.client.post(
             self.friendship_list_url,
-            {"user_id": self.user2.id},
+            {"user_id": self.user2.pk},
             format="json"
-        )
+        ) # type: ignore
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Friendship.objects.count(), 1)
-        self.assertEqual(Friendship.objects.first().status, FriendshipStatus.PENDING)
+        self.assertEqual(Friendship.objects.first().status, FriendshipStatus.PENDING) # type: ignore
 
     # -----------------------------
     # Принять запрос
     # -----------------------------
     def test_accept_friend_request(self):
+        self.client = APIClient()
+
         friendship = Friendship.objects.create(
             user1=self.user1, user2=self.user2, status=FriendshipStatus.PENDING
         )
         self.client.force_authenticate(user=self.user2)
 
-        url = reverse("friendship-accept", args=[friendship.id])
-        response = self.client.post(url)
+        url = reverse("friendship-accept", args=[friendship.pk])
+        response: Response = self.client.post(url) # type: ignore
 
         friendship.refresh_from_db()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -63,13 +68,15 @@ class FriendshipAPITestCase(APITestCase):
     # Отклонить запрос
     # -----------------------------
     def test_decline_friend_request(self):
+        self.client = APIClient()
+
         friendship = Friendship.objects.create(
             user1=self.user1, user2=self.user2, status=FriendshipStatus.PENDING
         )
         self.client.force_authenticate(user=self.user2)
 
-        url = reverse("friendship-decline", args=[friendship.id])
-        response = self.client.post(url)
+        url = reverse("friendship-decline", args=[friendship.pk])
+        response: Response = self.client.post(url) # type: ignore
 
         friendship.refresh_from_db()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -79,13 +86,15 @@ class FriendshipAPITestCase(APITestCase):
     # Заблокировать пользователя
     # -----------------------------
     def test_block_user(self):
+        self.client = APIClient()
+
         friendship = Friendship.objects.create(
             user1=self.user1, user2=self.user2, status=FriendshipStatus.PENDING
         )
         self.client.force_authenticate(user=self.user1)
 
-        url = reverse("friendship-block", args=[friendship.id])
-        response = self.client.post(url)
+        url = reverse("friendship-block", args=[friendship.pk])
+        response: Response = self.client.post(url) # type: ignore
 
         friendship.refresh_from_db()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -95,57 +104,65 @@ class FriendshipAPITestCase(APITestCase):
     # Входящие запросы
     # -----------------------------
     def test_incoming_requests(self):
+        self.client = APIClient()
+
         Friendship.objects.create(
             user1=self.user1, user2=self.user2, status=FriendshipStatus.PENDING
         )
         self.client.force_authenticate(user=self.user2)
 
         url = reverse("friendship-incoming")
-        response = self.client.get(url)
+        response: Response = self.client.get(url) # type: ignore
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
+        self.assertEqual(len(response.data), 1) # type: ignore
 
 
     # -----------------------------
     # Исходящие запросы
     # -----------------------------
     def test_outgoing_requests(self):
+        self.client = APIClient()
+
         Friendship.objects.create(
             user1=self.user1, user2=self.user2, status=FriendshipStatus.PENDING
         )
         self.client.force_authenticate(user=self.user1)
 
         url = reverse("friendship-outgoing")
-        response = self.client.get(url)
+        response: Response = self.client.get(url) # type: ignore
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
+        self.assertEqual(len(response.data), 1) # type: ignore
     
     # -----------------------------
     # Список друзей
     # -----------------------------
     def test_list_friends(self):
+        self.client = APIClient()
+
         Friendship.objects.create(
             user1=self.user1, user2=self.user2, status=FriendshipStatus.ACCEPTED
         )
         self.client.force_authenticate(user=self.user1)
 
         url = reverse("friendship-list-friends")
-        response = self.client.get(url)
+        response: Response = self.client.get(url) # type: ignore
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
+        self.assertEqual(len(response.data), 1) # type: ignore
 
     # -----------------------------
     # Поиск пользователей
     # -----------------------------
     def test_search_users(self):
+        self.client = APIClient()
+
         self.client.force_authenticate(user=self.user1)
 
         url = f"{self.search_url}?q=user2"
-        response = self.client.get(url)
+        response: Response = self.client.get(url) # type: ignore
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]["username"], "user2")
+        self.assertEqual(len(response.data), 1) # type: ignore
+        self.assertEqual(response.data[0]["username"], "user2")# type: ignore

@@ -46,3 +46,19 @@ class LogoutView(APIView):
             return Response({"detail": "Successfully logged out"}, status=status.HTTP_205_RESET_CONTENT)
         except Exception as e:
             return Response({"detail": "Invalid token"}, status=status.HTTP_400_BAD_REQUEST)
+        
+class SearchUserView(APIView):
+    def get(self, request):
+        q = request.query_params.get("q", "")
+
+        users = User.objects.filter(username__icontains=q)
+
+        data = [
+            {
+                "id": user.pk,
+                "username": user.username,
+            }
+            for user in users
+        ]
+
+        return Response(data)

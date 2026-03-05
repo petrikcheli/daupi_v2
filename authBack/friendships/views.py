@@ -24,7 +24,7 @@ class FriendshipViewSet(viewsets.ViewSet):
         )
 
         serializer.is_valid(raise_exception=True)
-        friendship = serializer.save()
+        friendship: Friendship = serializer.save() #type: ignore
 
         return Response({"status": friendship.status})
     
@@ -66,7 +66,7 @@ class FriendshipViewSet(viewsets.ViewSet):
         return Response({"count": friendships.count()})
     
     @action(detail=False, methods=["get"])
-    def list(self, request):
+    def list_friends(self, request):
         user = request.user
 
         friendships = Friendship.objects.filter(

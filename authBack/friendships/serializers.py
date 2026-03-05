@@ -22,12 +22,12 @@ class SendFriendRequstSerializer(serializers.Serializer):
         from_user = self.context["request"].user
         to_user = User.objects.get(id=validated_data["user_id"])
 
-        user1, user2 = sorted([from_user, to_user], key=lambda u: u.id)
+        user1, user2 = sorted([from_user, to_user], key=lambda u: u.pk)
 
         friendship, created = Friendship.objects.get_or_create(
             user1=user1,
             user2=user2,
-            defaults={"status": FriendshipStatus.PENDIGN}
+            defaults={"status": FriendshipStatus.PENDING}
         )
 
         return friendship

@@ -1,6 +1,7 @@
 from django.test import TestCase
 
 from django.urls import reverse
+from django.
 from rest_framework import status
 from rest_framework.test import APITestCase
 from .models import User
@@ -112,10 +113,10 @@ class RegisterTestCase(APITestCase):
 
         # Логин
         login_url = reverse("users:login")
-        response = self.client.post(login_url, {
+        response: Response = self.client.post(login_url, {
             "email": "test@mail.com",
             "password": "12345678"
-        }, format="json")
+        }, format="json") # type: ignore
 
         refresh = response.data["refresh"]
         access = response.data["access"]
