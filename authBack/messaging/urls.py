@@ -3,7 +3,7 @@ from .views import ConversationViewSet, MessageViewSet
 
 router = DefaultRouter()
 
-router.register("conversations", ConversationViewSet, basename="conversations")
-router.register("messages", MessageViewSet, basename="messages")
+router.register("conversation", ConversationViewSet, basename="conversation")
+router.register("message", MessageViewSet, basename="message")
 
 urlpatterns = router.urls

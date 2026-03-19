@@ -50,6 +50,10 @@ class CreateConversationSerializer(serializers.ModelSerializer):
 
     user_id = serializers.IntegerField()
 
+    class Meta:
+        model = Conversation
+        fields = ["user_id"]
+
     def create(self, validated_data):
         user = self.context["request"].user
         

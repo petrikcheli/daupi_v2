@@ -62,6 +62,7 @@ class MessageViewSet(viewsets.ViewSet):
     
     # История сообщений
     @transaction.atomic
+    @action(detail=False, methods=["get"])
     def history(self, request):
 
         conversation_id = request.query_params.get("conversation_id")
@@ -85,7 +86,7 @@ class MessageViewSet(viewsets.ViewSet):
             user=request.user
         )
 
-        participant.last_read_message = message_id
+        participant.last_read_message_id = message_id 
         participant.save(update_fields=["last_read_message"])
 
         return Response({"status": "ok"})
